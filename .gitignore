@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+*.pyc
+__pycache__/
+
+# Output files
+exports/*.md
+exports/*.pdf
+
+# Screenshots (too large)
+screenshots/
+
+# Flowcharts (working files)
+flowcharts/*.tmp
+
+# System files
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+~$*
+
+# Local config
+.claude/settings.local.json
