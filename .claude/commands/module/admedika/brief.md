@@ -311,19 +311,7 @@ pandoc atau markdown converter:
 
 ---
 
-## 📋 CONTOH PENGISIAN LENGKAP
-
-Lihat file: `.claude/docs/BRIEF_EXAMPLE.md`
-
-File ini berisi contoh lengkap pengisian semua 10 sections berdasarkan data actual dari **Rehab Medik Primaya Hospital Group**.
-
-Contoh ini menunjukkan:
-- Bagaimana mengisi setiap section dengan detail yang cukup
-- Bahasa dan tone yang professional
-- Level detail yang dibutuhkan AI untuk generate PRD berkualitas
-- Format dan struktur yang correct
-
----
+**Contoh real:** Lihat `module/REHAB_MEDIK/brief.md`
 
 Siap? Copy template ini dan isi sesuai module kamu! 🚀
 ```
