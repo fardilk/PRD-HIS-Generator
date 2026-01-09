@@ -29,12 +29,16 @@ Dokumen Persyaratan Produk (PRD) ini memberikan gambaran rinci tentang implement
 
 ### Latar Belakang
 
-Primaya Hospital Group memerlukan integrasi dengan sistem AdMedika untuk memfasilitasi pasien menggunakan payor AdMedika dalam mendapatkan layanan Rawat Inap.
+Primaya Hospital Group memerlukan integrasi dengan sistem AdMedika untuk memfasilitasi pasien menggunakan payor AdMedika dalam mendapatkan layanan Rawat Inap. Integrasi AdMedika sudah tersedia untuk layanan Rawat Jalan, sekarang dilanjutkan ke layanan Rawat Inap dengan 3 touchpoint utama:
+1. Pendaftaran Rawat Inap
+2. Transfer Rawat Inap
+3. Migrasi Pasien
 
 ### Tujuan Sistem
 
 - Memfasilitasi penggunaan payor AdMedika oleh pasien rawat inap
-- Mengotomatisasi pengecekan benefit dan klaim
+- Mengotomatisasi pengecekan benefit rawat inap (hak kamar, obat, tindakan)
+- Mengelola proses klaim dengan dokumentasi lengkap
 - Monitoring penggunaan benefit real-time
 
 ---
@@ -43,9 +47,16 @@ Primaya Hospital Group memerlukan integrasi dengan sistem AdMedika untuk memfasi
 
 ### Fitur Utama
 
-1. **Dashboard Pasien AdMedika** - Entry point untuk proses AdMedika
-2. **Proses Klaim Rawat Inap** - Pengecekan benefit, mapping, kalkulasi, dan submission dokumen
-3. **Daily Monitoring Penggunaan Benefit** - Monitor benefit usage harian dengan alert
+1. **Integrasi Pendaftaran Pasien Admedika** - Payor AdMedika tersedia saat registrasi rawat inap
+2. **Pengecekan Benefit Rawat Inap** - Cek benefit real-time dengan breakdown per kategori
+3. **Pemetaan Benefit ke Database Internal** - Mapping benefit AdMedika dengan master data RS
+4. **Proses Klaim Rawat Inap** - Pengumpulan dan submission dokumen klaim
+5. **Daily Monitoring Penggunaan Benefit** - Monitor benefit usage harian dengan alert
+
+### Tidak Termasuk dalam Scope
+
+- Penentuan ekses billing (manual di kasir oleh administrasi)
+- Lock billing (hanya notifikasi unlock jika ada penambahan layanan)
 
 ---
 
@@ -53,31 +64,31 @@ Primaya Hospital Group memerlukan integrasi dengan sistem AdMedika untuk memfasi
 
 ### Persona 1: Admisi/Registrasi
 - Peran: Staff Admisi Rawat Inap
-- Goals: Registrasi pasien dengan payor AdMedika
+- Goals: Registrasi pasien dengan payor AdMedika yang cepat dan akurat
 - Tech Level: Menengah
 
 ### Persona 2: Kasir/Billing
 - Peran: Staff Kasir/Billing Rawat Inap
-- Goals: Verifikasi benefit dan submit klaim
+- Goals: Verifikasi benefit, proses klaim, dan manage dokumentasi
 - Tech Level: Menengah-Tinggi
 
-### Persona 3: Case Mix/Medical Record
-- Peran: Case Mix Manager
-- Goals: Monitor benefit usage harian
+### Persona 3: Case Mix Manager
+- Peran: Case Mix/Medical Record Manager
+- Goals: Monitor benefit usage harian dan identifikasi audit risk
 - Tech Level: Tinggi
 
 ---
 
 ## User Stories
 
-### Story #1: Dashboard Pasien AdMedika
+### Story #1: Pendaftaran Pasien Rawat Inap dengan Payor AdMedika
 
 #### Story Overview
 
 | Field | Value |
 |-------|-------|
-| **User Persona** | Admisi/Kasir/Case Mix |
-| **Jobs to be Done** | Akses dashboard terpusat untuk semua proses AdMedika (Klaim, Monitoring) |
+| **User Persona** | Admisi/Registrasi |
+| **Jobs to be Done** | Melakukan pendaftaran pasien rawat inap dengan pemilihan payor AdMedika dan menampilkan benefit information |
 | **Referensi UI** | [Kosongkan dulu] |
 | **User Flow** | [Kosongkan dulu] |
 
@@ -90,7 +101,7 @@ Primaya Hospital Group memerlukan integrasi dengan sistem AdMedika untuk memfasi
 | Field | Value |
 |-------|-------|
 | **User Persona** | Kasir/Billing |
-| **Jobs to be Done** | Kelola proses klaim dengan pengecekan benefit, mapping, kalkulasi, dan upload dokumen |
+| **Jobs to be Done** | Mengelola proses klaim rawat inap dengan pengecekan benefit, mapping, kalkulasi, dan submission dokumen |
 | **Referensi UI** | [Kosongkan dulu] |
 | **User Flow** | [Kosongkan dulu] |
 
@@ -111,13 +122,13 @@ Primaya Hospital Group memerlukan integrasi dengan sistem AdMedika untuk memfasi
 
 ## Image Mapping
 
-| Story | Screenshot Range | Description | Personas |
-|-------|------------------|-------------|----------|
-| Story #1 | 001 | Menuju Dashboard Pasien AdMedika | All |
-| Story #2 | 002-008 | Proses Klaim: Dashboard, Map Benefit, Detail, Kalkulasi, Total, Status, Upload Dokumen | Kasir/Billing |
-| Story #3 | 009-012 | Daily Monitoring: Dashboard, Add Data, Form Isian, Data Terkirim | Case Mix Manager |
+| Story | Screenshot Range | Count | Description |
+|-------|------------------|-------|-------------|
+| Story #1 | 001-008 | 8 | Pendaftaran: Form, Cek Benefit, Pilih AdMedika, Tampilan Benefit, Error Handling, Upload Dokumen, Dashboard, Form Terisi |
+| Story #2 | 009-015 | 7 | Klaim: Fill Data/Map Benefit, Map Benefit Detail, Proses, Discharge, Kalkulasi, Status, Upload Dokumen |
+| Story #3 | 016-019 | 4 | Daily Monitoring: Dashboard, Add Data, Form Input, Confirmation |
 
-**Total Screenshots: 12 PNG files (001-012)**
+**Total Screenshots: 19 PNG files (001-019)**
 
 ---
 
@@ -125,67 +136,94 @@ Primaya Hospital Group memerlukan integrasi dengan sistem AdMedika untuk memfasi
 
 ### Functional Requirements (Grouped by Story)
 
-#### Story #1: Dashboard Pasien AdMedika
-**Screenshots: 001 (1 total)**
+#### Story #1: Pendaftaran Pasien Rawat Inap dengan Payor AdMedika
+**Screenshots: 001-008 (8 total)**
 
-1. **Dashboard Entry Point** (Screenshot 001)
-   - Menampilkan dashboard terpusat akses ke proses AdMedika
-   - Quick links ke Proses Klaim dan Daily Monitoring
-   - Summary informasi pasien AdMedika yang aktif
+1. **Form Pendaftaran Rawat Inap** (Screenshot 001)
+   - Menampilkan form pendaftaran pasien rawat inap standar
+   - Siap untuk penambahan field payor
+
+2. **Form Cek Benefit** (Screenshot 002)
+   - Menu atau form untuk cek benefit pasien
+   - Persiapan sebelum memilih payor AdMedika
+
+3. **Form Cek Benefit - Pilih AdMedika** (Screenshot 003)
+   - Dropdown payor menampilkan opsi AdMedika
+   - User dapat memilih AdMedika dari list payor
+
+4. **Tampilan Benefit AdMedika** (Screenshot 004)
+   - Setelah memilih AdMedika, sistem menampilkan benefit details
+   - Breakdown per kategori (kamar, obat, tindakan)
+
+5. **Error Handling - Jika Gagal** (Screenshot 005)
+   - Jika verifikasi ke AdMedika gagal, tampilkan error message
+   - Opsi untuk retry atau pilih payor lain
+
+6. **Upload Dokumen - Ketika diklik** (Screenshot 006)
+   - Form atau modal untuk upload dokumen pendukung
+   - File validation dan checklist dokumen
+
+7. **Menuju ke Dashboard Pasien AdMedika** (Screenshot 007)
+   - Flow navigasi dari pendaftaran ke dashboard AdMedika
+   - Dashboard entry point untuk proses lanjutan
+
+8. **Pendaftaran Pasien dengan AdMedika - Form Terisi** (Screenshot 008)
+   - Konfirmasi bahwa data pendaftaran sudah tersimpan dengan payor AdMedika
+   - Summary informasi pendaftaran
 
 ---
 
 #### Story #2: Proses Klaim Rawat Inap
-**Screenshots: 002-008 (7 total)**
+**Screenshots: 009-015 (7 total)**
 
-1. **Klaim Dashboard** (Screenshot 002)
-   - Menu "Proses Klaim" dengan list pasien yang siap diklaim
-   - Status overview setiap pasien
+1. **Proses Klaim - Fill Data & Map Benefit** (Screenshot 009)
+   - Dashboard untuk memulai proses klaim
+   - Interface input data dan mapping benefit
 
-2. **Map Benefit Interface** (Screenshot 003)
-   - Menampilkan mapping benefit AdMedika dengan layanan RS
-   - Interface untuk review benefit allocation
+2. **Map Benefit Detail** (Screenshot 010)
+   - Menampilkan detail mapping benefit AdMedika dengan layanan RS
+   - Coverage percentage, co-payment info per kategori
 
-3. **Benefit Detail View** (Screenshot 004)
-   - Detail breakdown benefit per kategori (kamar, obat, tindakan)
-   - Coverage percentage dan co-payment info
+3. **Proses Klaim - Overview** (Screenshot 011)
+   - Summary proses klaim yang sedang berjalan
+   - Status dan informasi klaim
 
-4. **Kalkulasi Total Benefit** (Screenshot 005)
-   - System melakukan kalkulasi otomatis benefit yang akan diklaim
-   - Preview benefit amount vs total tagihan
+4. **Klik Button Proses Discharge Pasien** (Screenshot 012)
+   - Trigger untuk memulai finalisasi klaim saat discharge
+   - Mempersiapkan data untuk submission
 
-5. **Total Terkalkulasi Display** (Screenshot 006)
-   - Menampilkan final total yang akan diklaim
-   - Breakdown: Total RS, Benefit Coverage, Pasien Bayar
+5. **Mengkalkulasi Total** (Screenshot 013)
+   - System melakukan kalkulasi benefit yang akan diklaim
+   - Preview total benefit vs tarif RS vs copay pasien
 
-6. **Status Klaim** (Screenshot 007)
-   - Menampilkan status klaim setelah submission
-   - Timeline dan update info dari AdMedika
+6. **Status Klaim - Sudah Diklaim** (Screenshot 014)
+   - Menampilkan status setelah klaim berhasil di-submit
+   - Action berubah menjadi "Lihat Klaim" untuk tracking
 
-7. **Upload Dokumen Klaim** (Screenshot 008)
-   - Form upload untuk dokumen klaim (Medical Record, Invoice, Receipt, Lab Report)
-   - Checklist dokumen required dan file validation
+7. **Upload Dokumen Klaim** (Screenshot 015)
+   - Form upload untuk dokumen support klaim
+   - Checklist: Medical Record, Invoice, Receipt, Lab Report, dll
 
 ---
 
 #### Story #3: Daily Monitoring Penggunaan Benefit
-**Screenshots: 009-012 (4 total)**
+**Screenshots: 016-019 (4 total)**
 
-1. **Monitoring Dashboard** (Screenshot 009)
-   - Display list semua pasien rawat inap dengan payor AdMedika
-   - Benefit usage summary per pasien (Used %, Risk Status)
+1. **Daily Monitoring - Dashboard** (Screenshot 016)
+   - Display list pasien rawat inap dengan payor AdMedika
+   - Summary benefit usage per pasien dengan risk indicator
 
-2. **Add Data Monitoring** (Screenshot 010)
-   - Interface untuk menambah/update data monitoring
-   - Input service yang baru diberikan dan benefit usage
+2. **Daily Monitoring - Add Data** (Screenshot 017)
+   - Interface untuk menambah/update monitoring data
+   - Input service baru yang diberikan
 
-3. **Form Isian Monitoring** (Screenshot 011)
-   - Form detail untuk input monitoring data
-   - Field: Kategori, Amount, Date, Service Description
+3. **Daily Monitoring - Form Input Data** (Screenshot 018)
+   - Form detail untuk input monitoring
+   - Field: Kategori Layanan, Amount, Tanggal, Deskripsi
 
-4. **Data Terkirim Confirmation** (Screenshot 012)
-   - Confirmation bahwa monitoring data sudah tersimpan
-   - Summary data yang ter-record di sistem
+4. **Daily Monitoring - Data Terkirim** (Screenshot 019)
+   - Confirmation bahwa data monitoring sudah tersimpan
+   - Summary data yang ter-record
 
 ---
 
@@ -201,7 +239,7 @@ Primaya Hospital Group memerlukan integrasi dengan sistem AdMedika untuk memfasi
 ## Business Rules
 
 1. **Payor Selection Rule**
-   - Payor AdMedika hanya dapat dipilih jika status kepesertaan valid
+   - Payor AdMedika hanya dapat dipilih jika status kepesertaan valid (verified ke AdMedika)
    - Satu pasien satu admission hanya boleh satu payor
    - Perubahan payor hanya pre-discharge
 
@@ -216,8 +254,8 @@ Primaya Hospital Group memerlukan integrasi dengan sistem AdMedika untuk memfasi
    - Excess menjadi tagihan pasien jika exceed limit
 
 4. **Claim Processing Rules**
-   - Klaim hanya bisa di-submit setelah pasien di-discharge
-   - Klaim harus dilengkapi dokumen support
+   - Klaim hanya bisa di-submit setelah pasien di-discharge (final)
+   - Klaim harus dilengkapi dokumen support sesuai checklist
    - Audit trail lengkap untuk setiap klaim action
 
 5. **Daily Monitoring Rules**
@@ -234,63 +272,26 @@ Primaya Hospital Group memerlukan integrasi dengan sistem AdMedika untuk memfasi
 #### 1. Peserta Verification API
 ```
 Endpoint: POST /api/v1/admedika/peserta/verify
-Request:
-{
-  "no_peserta": "string",
-  "tgl_lahir": "YYYY-MM-DD"
-}
-
-Response:
-{
-  "status": "active|inactive|not_found",
-  "nama_peserta": "string",
-  "paket": "string",
-  "effective_date": "YYYY-MM-DD"
-}
+Request: { "no_peserta": "string", "tgl_lahir": "YYYY-MM-DD" }
+Response: { "status": "active|inactive|not_found", "nama_peserta": "string", "paket": "string" }
 ```
 
 #### 2. Benefit Detail API
 ```
 Endpoint: GET /api/v1/admedika/benefit/{peserta_id}
-Response:
-{
-  "kamar": {
-    "limit_amount": 3000000,
-    "coverage_pct": 100
-  },
-  "obat": {
-    "limit_amount": 2000000,
-    "coverage_pct": 80
-  }
-}
+Response: { "kamar": {...}, "obat": {...}, "tindakan": {...} }
 ```
 
 #### 3. Claim Submission API
 ```
 Endpoint: POST /api/v1/admedika/claim/submit
-Request:
-{
-  "no_peserta": "string",
-  "claim_amount": 7500000,
-  "documents": [...]
-}
-
-Response:
-{
-  "claim_ref_number": "CLM-2026-001234",
-  "status": "submitted"
-}
+Response: { "claim_ref_number": "CLM-2026-001234", "status": "submitted" }
 ```
 
 #### 4. Claim Status API
 ```
 Endpoint: GET /api/v1/admedika/claim/{claim_ref_number}/status
-Response:
-{
-  "claim_ref": "CLM-2026-001234",
-  "status": "submitted|on_review|approved|rejected|paid",
-  "approved_amount": 7500000
-}
+Response: { "status": "submitted|on_review|approved|rejected|paid", "approved_amount": 7500000 }
 ```
 
 ---
@@ -299,45 +300,22 @@ Response:
 
 #### 1. admedika_payor_mapping
 ```
-- id (PK)
-- payor_code: 'ADMEDIKA'
-- peserta_number: string
-- rs_patient_id (FK)
-- admission_id (FK)
-- status: active|inactive
-- verified_date: datetime
+- id (PK), payor_code, peserta_number, rs_patient_id (FK), admission_id (FK), status, verified_date
 ```
 
 #### 2. admedika_benefit_mapping
 ```
-- id (PK)
-- benefit_category: 'kamar|obat|tindakan'
-- rs_service_group: string
-- coverage_percentage: decimal
-- copay_amount: decimal
-- effective_date: date
+- id (PK), benefit_category, rs_service_group, coverage_percentage, copay_amount, effective_date
 ```
 
 #### 3. admedika_claim
 ```
-- id (PK)
-- claim_ref_number: string (unique)
-- admission_id (FK)
-- claim_amount: decimal
-- approved_amount: decimal
-- status: submitted|on_review|approved|rejected|paid
-- submitted_date: datetime
+- id (PK), claim_ref_number, admission_id (FK), claim_amount, approved_amount, status, submitted_date
 ```
 
 #### 4. admedika_benefit_usage
 ```
-- id (PK)
-- admission_id (FK)
-- benefit_category: string
-- service_date: date
-- rs_amount: decimal
-- benefit_amount: decimal
-- copay_amount: decimal
+- id (PK), admission_id (FK), benefit_category, service_date, rs_amount, benefit_amount, copay_amount
 ```
 
 ---
@@ -375,7 +353,7 @@ Dokumen ini dibuat dalam konteks Projek Hospital Information System (HIS) V2 Pri
 
 | Versi | Tanggal | Deskripsi | Revised By |
 |-------|---------|-----------|-----------|
-| 1.0 | 09-01-2026 | Initial Draft - Admedika Rawat Inap PRD | Claude AI |
+| 1.0 | 09-01-2026 | Initial Draft - Admedika Rawat Inap PRD (19 Screenshots) | Claude AI |
 
 ---
 
