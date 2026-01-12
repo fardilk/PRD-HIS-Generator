@@ -418,135 +418,126 @@ Setelah proses klaim selesai dan status menjadi "Sudah Diklaim", staff Kasir/Bil
 
 ---
 
-### Story #4: Daily Monitoring Penggunaan Benefit
+### Story #4: Input Data Klinis Harian (Daily Monitoring)
 
 #### Story Overview
 
 | Field | Value |
 |-------|-------|
-| **User Persona** | Case Mix Manager |
-| **Jobs to be Done** | Monitor penggunaan benefit pasien AdMedika harian dari dashboard dengan input data, risk detection, dan alert triggering |
+| **User Persona** | Dokter / Tenaga Medis (Perawat, Fisioterapis) |
+| **Jobs to be Done** | Input data klinis harian pasien rawat inap AdMedika melalui form monitoring dengan vital signs, diagnosis, tindakan medis, dan catatan klinis untuk keperluan medical record dan dokumentasi klaim |
 | **Referensi UI** | Screenshots folder: `004-daily-monitoring` (5 screenshots) |
 
 #### Deskripsi
 
-Case Mix Manager mengakses tab "Daily Monitoring" di dashboard AdMedika untuk monitor penggunaan benefit pasien rawat inap. Tab ini menampilkan list semua pasien AdMedika yang sedang dirawat dengan benefit utilization percentage, risk indicator, dan alert status. Manager dapat input additional services/charges untuk update real-time calculation dan melihat benefit remaining untuk setiap pasien. System otomatis trigger alert ketika usage mencapai >85%.
+Dokter atau tenaga medis mengakses tab "Daily Monitoring" di dashboard proses klaim AdMedika untuk mencatat dan menginput data klinis harian pasien rawat inap. Tab ini menampilkan list monitoring entries yang sudah dicatat untuk pasien tersebut. Tenaga medis dapat menambahkan data monitoring baru dengan form yang komprehensif untuk input vital signs (suhu, nadi, tekanan darah, napas), diagnosis, tindakan medis, rencana perawatan, hasil pemeriksaan penunjang, dan catatan klinis lainnya. Setiap data monitoring yang diinput akan tersimpan dan dapat dilihat kembali untuk keperluan medical record dan dokumentasi klaim.
 
 #### User Acceptance Criteria
 
-1. Tab "Daily Monitoring" accessible dari dashboard AdMedika
-2. Dashboard menampilkan list semua active patients dengan payor AdMedika
-3. Setiap pasien menampilkan: Name, MR Number, Room, Admission Date, Benefit Available, Benefit Used, Benefit Remaining, Usage %
-4. Usage % ditampilkan dengan visual progress bar dengan color coding: Green (<50%), Yellow (50-84%), Orange (85-99%), Red (>100%)
-5. Risk indicator icon (⚠️) muncul ketika usage >85%
-6. System otomatis trigger alert notification ketika usage mencapai >85% (email, SMS, in-app)
-7. User dapat klik [Add Data] button untuk input additional services/charges
-8. Input form menampilkan: Patient selection, Service category, Amount, Date, Notes
-9. Setiap input otomatis update benefit usage calculation dan progress bar di dashboard
-10. Confirmation message menampilkan updated benefit usage dan current status
+1. Tab "Daily Monitoring" dapat diakses dari dashboard proses klaim AdMedika
+2. Tab menampilkan list monitoring entries yang sudah dicatat untuk pasien dengan kolom: No., Nama (Monitoring - [Tanggal]), Aksi (Lihat Detail), Status
+3. User dapat klik button "+ Daily Monitoring" untuk menambah data monitoring baru
+4. Form monitoring entry menampilkan header dengan informasi pasien: No. Klaim, Tanggal, Dokter, Spesialis
+5. Form mencakup input field untuk Kode ICD dengan dropdown dan kemampuan select multiple diagnosis
+6. Form mencakup input field Keadaan Umum (textarea) untuk deskripsi kondisi pasien umum
+7. Form mencakup input vital signs: Suhu (°C), Nadi (x/menit), Tensi (mmHg), Napas (x/menit)
+8. Form detail (expanded) mencakup fields tambahan: Tindakan, Rencana Tindakan, Penunjang (hasil konsultasi), Catatan, Laboratorium, Radiologi, Obat
+9. User dapat klik "Simpan & Kirim" untuk menyimpan data monitoring yang diinput
+10. Setelah simpan, data monitoring muncul di list entries dengan status yang ter-update
 
 #### User Flow
 
 ```
-[Start: Dashboard AdMedika]
+[Start: Dashboard Proses Klaim AdMedika]
   ↓
 [Klik Tab "Daily Monitoring" - Step 001]
-  - Navigate to daily monitoring interface
+  - Navigate ke Daily Monitoring interface
   ↓
-[View Daily Monitoring Dashboard - Step 002]
-  - Display list all active patients dengan payor AdMedika
-  - Columns: Name, MR, Room, Admission Date, Benefit Available, Benefit Used, Benefit Remaining, Usage %
-  - Color coding: Green (<50%), Yellow (50-84%), Orange (85-99%), Red (>100%)
-  - Risk icon: ⚠️ if >85%, 🚨 if >100%
+[View Monitoring Entries List - Step 002]
+  - Tampil list monitoring entries yang sudah dicatat untuk pasien
+  - Columns: No., Nama (Monitoring - [Tanggal]), Aksi (Lihat Detail), Status
+  - User dapat lihat history monitoring yang sudah di-input
   ↓
-{Risk Detection}
-  - System automatic scan setiap 5 menit
-  - If Usage > 85%: Trigger Alert
-    ↓
-    [Alert Notification - Step 001]
-    - Email + SMS + In-app notification
-    - Content: Patient Name, Current Usage %, Recommended Action
-    - [View Patient] button di notification
+[Klik "+ Daily Monitoring" Button - Step 003a]
+  - User klik button untuk menambah data monitoring baru
+  - Modal form terbuka dengan input fields
   ↓
-[Add Monitoring Data - Step 003a]
-  - User klik [Add Data] button
-  - Modal opens dengan quick input form
-  - Fields: Patient (dropdown), Category, Amount, Date, Notes
+[Input Data Monitoring - Quick Form]
+  - Fields: No. Klaim (auto-fill), Tanggal (date picker), Dokter (field), Spesialis (field)
+  - Kode ICD (dropdown multi-select), Keadaan Umum (textarea)
+  - Vital Signs: Suhu, Nadi, Tensi, Napas
   ↓
-[Detailed Form (if needed) - Step 003b]
-  - Expanded form dengan additional fields
-  - Auto-fill service details dari service master
-  - Real-time benefit calculation
+[Expand to Detail Form (if needed) - Step 003b]
+  - User dapat expand ke form lengkap dengan fields tambahan
+  - Additional fields: Tindakan, Rencana Tindakan, Penunjang, Catatan
+  - Additional fields: Laboratorium, Radiologi, Obat
   ↓
-[Input Data & Submit]
-  - User input semua required fields
-  - [Save] button submit data
+[Input & Review Data]
+  - User lengkapi semua input fields
+  - Review data sebelum submit
   ↓
-[Confirmation & Update - Step 004]
-  - Success message: "✓ Data Berhasil Disimpan"
-  - Display summary: Service, Amount, New Usage %
-  - Previous Usage % → New Usage %
-  - Benefit progress bar updated dengan new status
+[Klik "Simpan & Kirim" - Step 004]
+  - User klik button untuk submit
   ↓
-[Dashboard Auto-refresh]
-  - Table updated dengan new data
-  - Progress bar color updated jika threshold crossed
-  - Alert re-triggered jika applicable
+[Data Tersimpan]
+  - Monitoring entry tersimpan dalam database
+  - List monitoring entries ter-update dengan entry baru
   ↓
-[End: Daily Monitoring Complete]
+[End: Daily Monitoring Entry Saved]
 ```
 
 #### Screenshots dalam Story #4
 
 | No | Screenshot | Deskripsi |
 |---|-----------|-----------|
-| 001 | dari-proses-klaim-ke-daily-monitoring.png | **Tab Navigation di Dashboard AdMedika** menampilkan tiga tab utama: "Proses Klaim", "Upload Dokumen", dan "Daily Monitoring". User dapat mengakses Daily Monitoring dengan mengklik tab ini atau melalui link di sidebar dashboard. Setelah klik, sistem akan navigate ke Daily Monitoring interface dan memuat data monitoring terbaru. |
-| 002 | tampil-tab-daily-monitoring-terdapat-data-disana.png | **Tampilan Daily Monitoring Dashboard** menampilkan list lengkap semua pasien AdMedika yang sedang dirawat inap. Di bagian atas terdapat section untuk filter dan kontrol data, dengan date range picker untuk memilih periode monitoring, dropdown untuk filter berdasarkan tingkat risiko (Normal/Caution/Alert/Excess), dropdown status pasien (Active/About to Discharge), search box untuk mencari pasien berdasarkan nama atau nomor MR, tombol manual refresh, dan indikator status auto-refresh. Tabel utama menampilkan kolom-kolom penting meliputi nomor urut, nama pasien yang dapat diklik untuk detail, nomor rekam medis, kamar, tanggal masuk, jumlah hari dirawat, benefit yang tersedia, benefit yang sudah digunakan, benefit sisa, dan persentase penggunaan benefit dalam bentuk progress bar berwarna (hijau untuk <50%, kuning untuk 50-84%, oranye untuk 85-99%, merah untuk >100%). Setiap baris pasien juga menampilkan risk indicator icon dan tombol action untuk melihat detail atau menambah data monitoring. Pagination ditampilkan di bawah untuk navigasi antar halaman. |
-| 003a | tampil-form-tambah-data-daily-monitoring.png | **Modal Form Input Cepat** "Tambah Data Monitoring - Input Cepat" terbuka ketika user mengklik tombol Add Data dari dashboard. Form ini dirancang untuk input data yang cepat dan sederhana dengan field-field: dropdown untuk memilih pasien (dengan fitur search/autocomplete), dropdown kategori service, field numeric untuk amount dalam format Rp, date picker untuk tanggal service, dan textarea opsional untuk catatan. Setiap field yang required akan memiliki validasi real-time dengan pesan error inline dan highlighting jika ada kesalahan. Tombol action di bawah mencakup Save untuk menyimpan data, Cancel untuk membatalkan, dan link "Expand Form" untuk membuka form lengkap jika perlu input lebih detail. |
-| 003b | tampilan-form-tambah-daily-monitoring-complete.png | **Modal Form Input Lengkap** "Tambah Data Monitoring - Form Lengkap" menyediakan interface yang lebih komprehensif untuk input data monitoring dengan presisi tinggi. Form terbagi menjadi beberapa section: pertama adalah section informasi pasien (read-only) yang menampilkan nama pasien, nomor rekam medis, kamar, tanggal admission, dan dokter pengasuh. Section kedua untuk detail service mencakup kode service dengan dropdown berfitur search, deskripsi service (auto-fill, read-only), kategori service (auto-fill), tanggal service, quantity, dan unit price beserta total amount yang ter-kalkulasi otomatis. Section ketiga menampilkan perhitungan benefit secara real-time, memungkinkan user untuk memilih/mengedit kategori benefit terpetakan, menampilkan coverage percentage, estimasi benefit amount, dan co-payment amount yang semuanya ter-update secara real-time saat user mengubah data. Section terakhir adalah textarea optional untuk catatan tambahan. Semua perhitungan (service amount, coverage %, benefit amount, co-payment) ditampilkan dan diupdate secara langsung saat user melakukan perubahan. Tombol action mencakup Save untuk menyimpan, Cancel untuk membatalkan, dan link untuk collapse form kembali ke versi quick form. |
-| 004 | daily-monitoring-berhasil-ditambahkan.png | **Layar Konfirmasi Success** menampilkan green success message card dengan tanda "✓ Data Berhasil Disimpan" beserta subtitle dan timestamp pencatatan. Di bawah pesan success, sistem menampilkan ringkasan data yang baru saja di-input meliputi service details (nama service, kategori, amount, quantity, tanggal) dan benefit calculation details (coverage %, benefit amount, co-payment). Untuk memberikan konteks dampak, screen menampilkan comparison sebelum dan sesudah: bagian "Sebelum" menunjukkan benefit used, benefit remaining, dan usage % pasien sebelum entry baru, sedangkan bagian "Sesudah" menampilkan nilai-nilai yang sudah diupdate dengan visual indicator menunjukkan perubahan yang terjadi. Jika input data ini menyebabkan usage mencapai threshold alert (>85%), sistem menampilkan notification alert yang memberitahu tentang kondisi ini dan info tentang pengiriman alert (email/SMS/in-app). Tombol action di bawah mencakup "Kembali ke Dashboard" yang akan me-refresh dashboard secara otomatis dengan data terbaru, "Tambah Data Lagi" untuk kembali membuka form dan menambah data lainnya, dan "Lihat Detail Pasien" untuk melihat semua informasi detail pasien tersebut. |
+| 001 | dari-proses-klaim-ke-daily-monitoring.png | **Tab Navigation dalam Modal Proses Klaim** menampilkan tiga tab utama: "Discharge Pasien", "Upload Dokumen", dan "Daily Monitoring". User dapat mengakses Daily Monitoring dengan mengklik tab ini. Setelah klik, sistem akan menampilkan Daily Monitoring interface dengan list monitoring entries yang sudah dicatat untuk pasien tersebut. |
+| 002 | tampil-tab-daily-monitoring-terdapat-data-disana.png | **Tampilan Tab Daily Monitoring** menampilkan list monitoring entries yang telah dicatat untuk pasien yang sedang dalam proses klaim. Di bagian atas terdapat tombol "+ Daily Monitoring" yang dapat diklik untuk menambah data monitoring baru. Tabel menampilkan kolom-kolom: No. (nomor urut), Nama (menampilkan "Monitoring - [Tanggal]" untuk setiap entry), Aksi (tombol "Lihat Detail" untuk melihat detail monitoring entry), dan Status (menampilkan respon status seperti "Respon: Sudah Terkirim" atau "Transaksi tidak ditemukan"). Setiap baris merepresentasikan satu kali pencatatan data monitoring harian yang sudah dilakukan. Pagination ditampilkan untuk navigasi jika ada banyak entries. |
+| 003a | tampil-form-tambah-data-daily-monitoring.png | **Form Input Data Monitoring** terbuka ketika user mengklik tombol "+ Daily Monitoring". Form menampilkan header dengan informasi klaim pasien: No. Klaim (auto-fill), Tanggal (date picker), Dokter (text field), dan Spesialis (text field). Dibawahnya terdapat field untuk Kode ICD (dropdown dengan kemampuan select multiple diagnosis) dengan tombol tambah untuk menambah diagnosis lainnya jika diperlukan. Form juga mencakup field Keadaan Umum (textarea) untuk deskripsi kondisi pasien secara umum. Input vital signs tersedia dengan fields: Suhu (dalam °C), Nadi (dalam x/menit), Tensi (dalam mmHg), dan Napas (dalam x/menit). Tombol action di bawah mencakup "Tutup" untuk menutup form, dan "Simpan & Kirim" untuk menyimpan data yang telah diinput. |
+| 003b | tampilan-form-tambah-daily-monitoring-complete.png | **Form Input Lengkap "Kirim Klaim"** menampilkan versi expanded dari form monitoring dengan section tambahan untuk data klinis yang lebih detail. Form dimulai dengan header sama seperti quick form (No. Klaim, Tanggal, Dokter, Spesialis). Kemudian menampilkan section untuk Kode ICD dengan kemampuan multi-select diagnosis, Keadaan Umum untuk kondisi pasien umum, dan vital signs (Suhu, Nadi, Tensi, Napas). Selanjutnya form mencakup section tambahan: Tindakan (tindakan medis yang dilakukan), Rencana Tindakan (rencana perawatan ke depan), Penunjang (hasil konsultasi atau pemeriksaan penunjang), Catatan (catatan klinis umum), Laboratorium (hasil tes laboratorium), Radiologi (hasil pemeriksaan radiologi/imaging), dan Obat (daftar obat yang diberikan). Setiap field mencakup textarea untuk input detail. Tombol action di bawah mencakup "Tutup" dan "Simpan & Kirim". |
+| 004 | daily-monitoring-berhasil-ditambahkan.png | **Kembali ke Tab Daily Monitoring** setelah data monitoring berhasil disimpan. List monitoring entries ter-update dengan menampilkan entry-entry monitoring yang baru saja diinput. Tabel menunjukkan semua monitoring entries dengan nomor urut, nama monitoring dengan tanggal (format: "Monitoring - [Tanggal]"), tombol "Lihat Detail" untuk melihat detail entry, dan status response (menampilkan status seperti "Respon: Sudah Terkirim" untuk entry yang sudah dikirim). Jika ada beberapa monitoring entries dengan tanggal berbeda-beda, semuanya ditampilkan dalam satu list view. User dapat menambah monitoring entry baru lagi dengan klik tombol "+ Daily Monitoring" atau melihat detail entry tertentu dengan klik "Lihat Detail". |
 
 #### System Integration
 
 **API Calls:**
-- `GET /his/admissions/active?payor=ADMEDIKA` - Get all active AdMedika admissions
-- `GET /his/admission/{id}/benefit-usage` - Get current benefit utilization
-- `GET /his/admission/{id}/services` - Get all services charged to date
-- `GET /api/v1/admedika/benefit/{peserta_id}` - Get current benefit limits & rules
-- `POST /his/monitoring/add-usage` - Record new service/usage entry
-- `POST /his/monitoring/alert` - Trigger alert when threshold crossed
-- `GET /his/monitoring/weekly-report` - Generate weekly report
+- `GET /his/admission/{admission_id}/monitoring-entries` - Get list monitoring entries untuk pasien
+- `POST /his/admission/{admission_id}/monitoring-entries` - Create new monitoring entry
+- `GET /his/admission/{admission_id}/monitoring-entries/{entry_id}` - Get monitoring entry detail
+- `PUT /his/admission/{admission_id}/monitoring-entries/{entry_id}` - Update monitoring entry
+- `GET /his/master/icd10` - Get ICD-10 code master data untuk diagnosis input
+- `GET /his/services/{service_code}/details` - Get service master details
 
 **Database Operations:**
-- Insert into `admedika_benefit_usage` untuk setiap monitoring entry
-- Update `admedika_daily_monitoring` dengan latest usage data
-- Insert into `admedika_alert_log` saat alert triggered
-- Create audit log entry untuk setiap action
-- Generate report dari aggregated `admedika_daily_monitoring` data
+- Insert into `admedika_daily_monitoring` untuk setiap monitoring entry baru
+- Insert into `admedika_monitoring_detail` untuk vital signs dan clinical data
+- Update `admedika_monitoring_entries` dengan status dan changes
+- Create audit log entry untuk setiap monitoring entry create/update
+- Link monitoring entries ke admission record untuk medical record documentation
 
 #### Non-Functional Requirements
 
-- **Performance**: Dashboard load dengan list 100+ patients dalam < 5 detik, add data dalam < 2 detik
-- **Real-time**: Usage % updated immediately setelah data input, dashboard reflect within 10 seconds
-- **Scalability**: Support concurrent monitoring dari multiple Case Mix Managers
-- **Data Accuracy**: Benefit calculation consistent dengan benefit master & previous entries
-- **Alerting**: Alert delivery within 1 minute of threshold crossing
-- **Reporting**: Weekly report generation < 10 minutes untuk dataset dengan 1000+ patients
+- **Performance**: Form load < 2 detik, save monitoring entry < 1 detik, list monitoring entries load < 2 detik
+- **Responsiveness**: Form input remain responsive saat user typing, no lag saat input vital signs
+- **Data Validation**: Input validation on client & server side, ensure data integrity untuk medical records
+- **Medical Data Security**: All clinical data encrypted at rest, audit trail lengkap untuk setiap entry create/update
+- **Accessibility**: Form accessible via keyboard, screen reader compatible untuk medical staff
+- **Scalability**: Support concurrent input dari multiple medical staff untuk patient yang sama
+- **Compliance**: Maintain audit trail untuk keperluan medical record documentation dan compliance
 
 #### Known Issues & Limitations
 
-- Alert notification delivery depends on email/SMS gateway availability
-- Real-time calculation based on cached benefit data (refreshed every 6 hours)
-- Cannot modify past monitoring entries (write-once principle untuk audit compliance)
-- Weekly report generation may take 5-10 minutes untuk large dataset
+- Monitoring entries bersifat append-only (tidak dapat diedit setelah disimpan) untuk maintain audit trail dan compliance
+- ICD-10 dropdown terbatas pada master data yang tersedia dalam sistem
+- Concurrent input dari multiple medical staff untuk patient yang sama akan memerlukan conflict resolution strategy
+- Form tidak support offline mode - requires active internet connection untuk submit
 
 #### Dependencies
 
 - Active admission data maintained current dalam HIS
-- Service master data updated dengan latest pricing & benefit mapping
-- Benefit rules dari AdMedika di-cache dan refreshed every 6 hours
-- Email/SMS notification system operational untuk alert delivery
-- Background job scheduler operational untuk report generation
+- ICD-10 master data updated dan accessible dalam master database
+- Medical staff credentials dan role definitions maintained dalam access control system
+- Database transaction support untuk ensure data consistency saat concurrent input
+- Audit logging system operational untuk maintain compliance trail
+- Medical record system accessible untuk link monitoring entries ke patient medical record
 
 #### Sign-off
 
