@@ -30,10 +30,14 @@ Generate comprehensive Product Requirement Documentation based on module context
    - Branch decisions with `→ [Yes]` and `→ [No]`
    - Always start with `[Start]` and end with `[END]`
 
-5. **Document Steps**
+5. **Document Steps & Screenshot Descriptions**
    - Each step = one user action or system response
-   - Include screenshot placeholder with detailed instructions
-   - Reference UI elements by name (bold)
+   - For screenshot descriptions: describe **structure and UI elements ONLY**
+   - **DO NOT include example data** from the actual screenshots (specific names, values, amounts, etc.)
+   - Instead of: "Nama Pasien (RENJANA LAZUARDI), No. Reg (P250200047)..."
+   - Write: "Nama Pasien, No. Reg, No. Rekam Medis, Penjamin, Departemen..."
+   - Organize with clear sections, bullets, or line breaks for readability
+   - Reference UI element types by name (bold) - fields, buttons, dropdowns, radio buttons, tables, sections
 
 ### Output Quality Checks
 - [ ] All user personas are defined

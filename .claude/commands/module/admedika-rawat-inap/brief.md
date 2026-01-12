@@ -93,8 +93,7 @@ ya buat aja 10 hari kerja
 ## 4. User Stories Overview
 
 // generate dari screenshots adjust2 aja storynya yak seperti ini. Yang pasti dimulai proses step seperti ini:
-1. Pendaftaran
-2. Cek benefit
+1. Pendaftaran & Cek benefit
 3. Daily monitoring
 4. Proses klaim
 
