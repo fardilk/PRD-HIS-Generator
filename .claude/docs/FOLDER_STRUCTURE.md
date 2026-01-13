@@ -123,10 +123,10 @@ PRD/
 │       └── 📁 REHAB_MEDIK_PRIMAYA/
 │           └── (25 images referenced)
 │
-├── 📁 04_USER_STORIES/ (legacy - keep for reference)
+├── 📁 STORIES/ (legacy - keep for reference)
 │   └── 📄 _TEMPLATE.md
 │
-├── 📁 07_FORMS/ (legacy - keep for reference)
+├── 📁 FORMS/ (legacy - keep for reference)
 │   └── 📄 _TEMPLATE.md
 │
 └── 📁 HISv2/ (original export folder)
